@@ -1,4 +1,5 @@
 /result/**
 /app/downloaded/**
 /app/static/local/**
+/app/__pycache__/**
 /datasets/**/
