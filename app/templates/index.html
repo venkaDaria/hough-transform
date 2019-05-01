@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Daria Pydorenko">
+
+    <title>Hough Example</title>
+
+    <script src="{{ url_for('static', filename='local/jquery-3.4.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='local/i18next.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='local/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='local/i18nextXHRBackend.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='local/bootstrap.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='local/bootstrap.min.css') }}"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='local/font-awesome.min.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sticky-footer.css') }}">
+  </head>
+
+  <body>
+
+    <!-- Begin page content -->
+    <main role="main" class="container">
+        <h2 class="mt-5 translated" id="title">Hough transform</h2>
+        <br/>
+
+        <!-- Menu line -->
+        <form action="{{ url_for('index') }}" method="POST">
+        <div class="form-group row">
+            <label for="source" class="col-1 col-form-label translated" id="source_label">Source</label> 
+            <div class="col-2">
+            <select id="source" name="source" class="custom-select" required>
+                <option value="datasets" class="translated" id="datasets">Datasets</option>
+                <option value="own" class="translated" id="own">Own</option>
+            </select>
+            </div>
+            <div class="col-1"></div>
+
+            <label for="dataset" class="col-form-label translated" id="dataset_label">Dataset</label> 
+            <div class="col-3">
+            <select id="dataset" name="dataset" class="custom-select">
+                {% for dir in dirs %}
+                <option value="{{ dir }}">{{ dir }}</option>
+                {% endfor %}
+            </select>
+            </div> 
+            <div class="col-1"></div>
+
+            <label for="type" class="col-form-label translated" id="type_label">Type</label> 
+            <div class="col-2">
+            <select id="type" name="type" class="custom-select" required>
+                <option value="lines" class="translated" id="lines">Lines</option>
+                <option value="circles" class="translated" id="circles">Circles</option>
+                <option value="edges" class="translated" id="edges">Edges</option>
+            </select>
+            </div>
+
+            <div id="images_data" style="display: none"></div>
+        </div>
+
+        <!-- Directory line -->
+        <div class="form-group row">
+            <div class="custom-file" id="choose_directory">
+                <input type="file" class="custom-file-input translated" id="images" name="images" 
+                    onchange="readURL(this)" disabled multiple>
+                <label class="custom-file-label translated" for="images" id="images_label">Choose images</label>
+            </div>
+        </div>
+
+        <!-- Threshold line -->
+        <div class="form-group row">
+            <label for="threshold" class="col-2 col-form-label translated" id="threshold_label">Threshold</label>
+            <div class="col-10">
+                <input class="form-control" type="number" value="100" min="0" id="threshold" name="threshold">
+            </div>
+        </div>
+
+        <!-- Buttons line -->
+        <div class="form-group row">
+            <div class="offset-8 col-1">
+            <button name="start" type="submit" class="btn btn-primary translated" id="start">
+                Start
+            </button>
+            </div>
+            <div class="col-1">
+            <button name="save" type="button" class="btn btn-success translated" id="save_btn">
+                Save
+            </button>
+            </div>
+            <div class="col-1">
+            <button name="clear" type="button" class="btn btn-light translated" id="clear_btn" onclick="clear_result()">
+                Clear
+            </button>
+            </div>
+        </div>
+        </form>
+
+        <!-- Dataset -->
+        <div class="container text-center my-3">
+            <h5 class="translated" id="dataset_label">Dataset</h5>
+            <div id="recipeCarousel" class="carousel slide w-100" data-ride="carousel" data-interval=false>
+                <div class="carousel-inner w-100" role="listbox" id="main_dataset">
+                    {% for data in dataset %}
+                        {% if loop.index == 1 %}
+                        <div class="carousel-item row no-gutters active">
+                        {% elif (loop.index - 1) % 4 == 0 %}
+                        <div class="carousel-item row no-gutters">
+                        {% endif %}
+                        <div class="col-3 float-left"><img class="img-fluid" src="{{ data }}"></div>
+                        {% if loop.index % 4 == 0 or loop.index == dataset.length %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <a class="carousel-control-prev" href="#recipeCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only" class="translated" id="prev">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#recipeCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only" class="translated" id="next">Next</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Result -->
+        <div class="container text-center my-3">
+            <h5 class="translated" id="result">Result</h5>
+            <div id="recipeCarousel2" class="carousel slide w-100" data-ride="carousel" data-interval=false>
+                <div class="carousel-inner w-100" role="listbox">
+                    {% for data in result %}
+                        {% if loop.index == 1 %}
+                        <div class="carousel-item row no-gutters active">
+                        {% elif (loop.index - 1) % 4 == 0 %}
+                        <div class="carousel-item row no-gutters">
+                        {% endif %}
+                        <div class="col-3 float-left"><img class="img-fluid" src="{{ data }}"></div>
+                        {% if loop.index % 4 == 0 or loop.index == dataset.length %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <a class="carousel-control-prev" href="#recipeCarousel2" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only" class="translated" id="prev">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#recipeCarousel2" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only" class="translated" id="next">Next</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container row">  
+            <div class="offset-4 col-2">
+                <span class="text-muted">KhNURE, 2019</span>
+            </div>
+            <!-- I18n -->
+            <div class="offset-4 col-2">
+                <button class="btn btn-light" onclick="changeLang('en')">EN</button>
+                <button class="btn btn-light" onclick="changeLang('ua')">UA</button>
+            </div>
+        </div>
+    </footer>
+  </body>
+</html>

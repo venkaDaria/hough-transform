@@ -1,0 +1,19 @@
+{
+    "title": "Перетворення Хафа",
+    "source_label": "Звідки",
+    "dataset_label": "Вихідні дані",
+    "datasets": "Існуючі",
+    "own": "Власні",
+    "type_label": "Тип", 
+    "lines": "Лінії",
+    "circles": "Окружності",
+    "edges": "Границі",
+    "images_label": "Вибрати зображення",
+    "threshold_label": "Поріг",
+    "start": "Почати",
+    "save_btn": "Зберегти",
+    "clear_btn": "Очистити",
+    "prev": "Назад",
+    "next": "Далі",
+    "result": "Результат"
+}

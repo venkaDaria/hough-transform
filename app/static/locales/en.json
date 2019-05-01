@@ -1,0 +1,19 @@
+{
+    "title": "Hough transform",
+    "source_label": "Source",
+    "dataset_label": "Dataset",
+    "datasets": "Datasets",
+    "own": "Own",
+    "type_label": "Type", 
+    "lines": "Lines",
+    "circles": "Circles",
+    "edges": "Edges",
+    "images_label": "Choose images",
+    "threshold_label": "Threshold",
+    "start": "Start",
+    "save_btn": "Save",
+    "clear_btn": "Clear",
+    "prev": "Previous",
+    "next": "Next",
+    "result": "Result"
+}
