@@ -1,15 +1,19 @@
 # Перетворення Хафа
 
+## Вимоги 
+
+Встановлений Python 3 (https://www.python.org/downloads/).
+
 ## Запуск програми
 
-Запустити `run.bat`.
+Запустити `run.bat` у терміналі (консоль).
 
 Або виконати наступні команди:
 
 1. Встановлення залежностей:
 
         pip install --no-index --find-links=app/downloaded -r app/requirements.txt
-        # or
+        # або
         pip install -r app/requirements.txt
 
 2. Власне запуск програми:
